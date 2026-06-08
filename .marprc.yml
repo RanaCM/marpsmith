@@ -1,0 +1,13 @@
+# Registers the bundled themes so `marp` resolves a deck's frontmatter `theme:`
+# without needing `--theme-set`. marp reads this from the CWD, so run marp from
+# the repo root (paths below are relative to it). To preview from inside
+# examples/ instead, that folder ships its own .marprc.yml.
+#
+# Do NOT add a top-level `theme:` here — it behaves like `--theme` and would
+# override every deck's frontmatter, breaking per-deck theme selection.
+themeSet:
+  - skills/marp-slides/themes/dark.css
+  - skills/marp-slides/themes/light.css
+  - skills/marp-slides/themes/high-contrast.css
+  - skills/marp-slides/themes/newspaper.css
+  - skills/marp-slides/themes/synthwave.css

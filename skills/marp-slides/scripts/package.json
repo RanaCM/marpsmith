@@ -1,0 +1,19 @@
+{
+  "name": "marp-slides-check",
+  "version": "1.0.0",
+  "description": "Headless DOM verification for Marp slide decks",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "check-slides": "./check-slides.mjs"
+  },
+  "scripts": {
+    "check": "node check-slides.mjs"
+  },
+  "dependencies": {
+    "puppeteer": "^23.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

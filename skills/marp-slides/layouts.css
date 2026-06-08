@@ -1,0 +1,388 @@
+/* ─────────────────────────────────────────────────────────────────
+ * layouts.css — Marp layout classes, theme-agnostic.
+ *
+ * SOURCE FILE. Do not @import this directly — Marp will not resolve
+ * the path at build time. Instead, append this file's content to
+ * your theme CSS (see themes/README.md for instructions).
+ *
+ * The supported starter is `themes/dark.css`. New themes should be
+ * built by copying dark.css and editing only the palette section
+ * above the `═══ Layout classes` separator — the layout block below
+ * is theme-agnostic and must stay byte-identical.
+ *
+ * Theming hooks (CSS custom properties — set in your palette section):
+ *   --card-tint           background for .compare-grid > div and .matrix > div
+ *   --table-row-bg        primary table cell background
+ *   --table-row-alt-bg    alternating-row table cell background
+ *   --compare-a-accent    left-column accent (cyan family)
+ *   --compare-a-tint      left-column gradient tint for compare-detail-a
+ *   --compare-b-accent    right-column accent (pink family)
+ *   --compare-b-tint      right-column gradient tint for compare-detail-b
+ * All vars have neutral defaults so a theme that doesn't set them
+ * still renders correctly, just without theme-specific decoration.
+ *
+ * Pair with `<!-- _class: layout-name -->` directives in markdown.
+ * ───────────────────────────────────────────────────────────────── */
+
+/* ─── Layer 1: typography & overflow auto-fixes ─────────────────────
+   These rules apply to every slide and prevent the most common
+   automated-conversion failure modes without any per-slide tuning. */
+
+/* Auto-balance multi-line headings to avoid orphan words.
+   Chrome 114+, Firefox 121+. Falls back gracefully. */
+section :is(h1, h2, h3, h4, h5, h6) { text-wrap: balance; }
+section p, section li { text-wrap: pretty; }
+
+/* Long URLs / unbreakable words wrap instead of pushing overflow. */
+section { overflow-wrap: break-word; }
+
+/* Element-level overflow guards. */
+section img { max-width: 100%; max-height: 70vh; object-fit: contain; }
+section pre { max-width: 100%; overflow-x: auto; }
+section table {
+  /* Override GitHub markdown's `display: block; width: max-content` which
+     makes cells render as inline blocks and not stretch. */
+  display: table;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Grid children can't blow out columns from long unbreakable content. */
+section :is(.compare-grid, .matrix) > * { min-width: 0; }
+
+/* Heading flows in normal document order (no absolute positioning). A long
+   heading wraps to 2 lines and pushes content down naturally — no overlap
+   risk, no need to shrink the heading. The trade-off vs. an absolute pin
+   is that heading vertical position varies by 1 line height between slides
+   with 1- and 2-line headings, which most decks tolerate well. */
+section :is(h1, h2, h3, h4, h5, h6) {
+  width: fit-content;
+  margin: 0 0 0.6em 0;
+  align-self: flex-start;
+}
+section {
+  padding: 2.5em 3em;
+  /* Anchor flex content to the top so the heading sits at the top.
+     Cover-like layouts that want centering must explicitly set
+     `justify-content: center` (title-cover, section-divider,
+     big-stat-hero, pull-quote already do). */
+  justify-content: flex-start;
+}
+
+/* ─── title-cover ────────────────────────────────────────────────── */
+section.title-cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2.5em 3em;
+}
+section.title-cover :is(h1, h2, h3, h4, h5, h6) {
+  position: static;
+  margin: 0.3em 0;
+}
+
+/* ─── section-divider ───────────────────────────────────────────── */
+section.section-divider {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2.5em 3em;
+}
+section.section-divider :is(h1, h2, h3, h4, h5, h6) {
+  position: static;
+  align-self: center;
+  font-size: 1.6em;
+}
+
+/* ─── prose / prose-with-tldr ───────────────────────────────────── */
+section.prose,
+section.prose-with-tldr {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+section.prose-with-tldr blockquote {
+  font-size: 0.8em;
+  font-weight: 300;
+  margin-bottom: 1.2em;
+}
+section.prose > p,
+section.prose-with-tldr > p {
+  font-size: 0.92em;
+  line-height: 1.65;
+}
+/* Short-prose centering: when the slide has fewer than 3 direct <p> children,
+   the content fills less than half the slide height and reads as visually
+   unbalanced when top-anchored. Vertically center those instead. Long prose
+   (3+ paragraphs) keeps its top anchor — the existing reading rhythm where
+   the heading sits at the top and the body flows below is correct there.
+   The `:has()` selector requires modern Chromium (Marp renders via Puppeteer
+   with bundled Chromium, so this is safe). The b-95/b-90 override below
+   defeats this rule for any prose slide that auto-fit had to shrink, since
+   shrinking is by definition a "content is dense" signal — those stay
+   top-anchored regardless of paragraph count. */
+section.prose:not(:has(> p:nth-of-type(3))),
+section.prose-with-tldr:not(:has(> p:nth-of-type(3))) {
+  justify-content: center;
+}
+
+/* ─── two-col-list ──────────────────────────────────────────────── */
+section.two-col-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+section.two-col-list :is(ol, ul) {
+  column-count: 2;
+  column-gap: 2.5em;
+}
+section.two-col-list :is(ol, ul) li {
+  break-inside: avoid;
+  margin-bottom: 0.3em;
+}
+
+/* ─── comparison ────────────────────────────────────────────────── */
+section.comparison {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+section.comparison .compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2em;
+  margin-top: 0.4em;
+}
+section.comparison .compare-grid > div {
+  padding: 0.75em 1em;
+  border-radius: 6px;
+  background: var(--card-tint, rgba(127, 127, 127, 0.06));
+  font-size: 0.85em;
+  line-height: 1.32;
+}
+section.comparison .compare-grid > div > p:first-child {
+  margin-bottom: 0.55em;
+}
+section.comparison .compare-grid li {
+  margin: 0.42em 0;
+}
+
+/* ─── compare-detail-a / compare-detail-b ──────────────────────────
+   Companion slides for an overflowing `comparison`. The original
+   comparison slide stays as a side-by-side overview with concise
+   bullets; the two detail slides expand each side, with a left-edge
+   accent + side-fade tint matching the column color so the audience
+   keeps the visual association. Stack with any content layout, e.g.
+   `prose-with-tldr compare-detail-a` or just `compare-detail-a` on a
+   default bullet-list slide. Override `--compare-a-accent` /
+   `--compare-b-accent` (and `-tint` variants) in your theme to retune.
+*/
+section.compare-detail-a,
+section.compare-detail-b {
+  border-left: 6px solid var(--accent, currentColor);
+  padding-left: 3em;
+}
+section.compare-detail-a {
+  --accent: var(--compare-a-accent, #A1EFFF);
+  background:
+    linear-gradient(135deg, var(--compare-a-tint, rgba(161, 239, 255, 0.06)) 0%, transparent 50%);
+}
+section.compare-detail-b {
+  --accent: var(--compare-b-accent, #EA6B8D);
+  background:
+    linear-gradient(135deg, var(--compare-b-tint, rgba(234, 107, 141, 0.06)) 0%, transparent 50%);
+}
+
+/* ─── matrix-2x2 ────────────────────────────────────────────────── */
+section.matrix-2x2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+section.matrix-2x2 .matrix {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1em;
+  height: 70%;
+  margin-top: 0.5em;
+}
+section.matrix-2x2 .matrix > div {
+  padding: 1em;
+  border-radius: 6px;
+  background: var(--card-tint, rgba(127, 127, 127, 0.06));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ─── big-stat-hero ─────────────────────────────────────────────── */
+section.big-stat-hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+/* Base layer sets align-self:flex-start on all headings; override here
+   so the heading centres without relying on each theme to repeat it. */
+section.big-stat-hero :is(h1, h2, h3, h4, h5, h6) {
+  align-self: center;
+}
+section.big-stat-hero .stat {
+  /* !important guards against the Marp default theme winning the
+     cascade for font-size on plain div children. */
+  font-size: 5em !important;
+  line-height: 1;
+  font-weight: 800;
+  margin: 0.3em 0;
+}
+
+/* ─── pull-quote ────────────────────────────────────────────────── */
+section.pull-quote {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2.5em 3em;
+}
+section.pull-quote :is(h1, h2, h3, h4, h5, h6) {
+  position: static;
+}
+section.pull-quote blockquote {
+  font-size: 1.4em;
+  line-height: 1.5;
+  border: none;
+  padding: 0;
+  max-width: 80%;
+  margin: 0 auto;
+  font-style: italic;
+}
+section.pull-quote p:last-of-type {
+  font-size: 0.85em;
+  margin-top: 1em;
+  opacity: 0.8;
+}
+
+/* ─── process-flow ──────────────────────────────────────────────── */
+section.process-flow {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+section.process-flow ol {
+  list-style: none;
+  padding: 0;
+  counter-reset: step;
+  margin-top: 0.6em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+section.process-flow ol li {
+  counter-increment: step;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6em;
+  font-size: 0.88em;
+  line-height: 1.4;
+}
+section.process-flow ol li::before {
+  content: counter(step);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5em;
+  height: 1.5em;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  font-size: 0.85em;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* ─── image-led ─────────────────────────────────────────────────── */
+section.image-led {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+}
+section.image-led img {
+  max-width: 90%;
+  max-height: 460px;
+  object-fit: contain;
+}
+section.image-led p:last-of-type {
+  font-size: 0.85em;
+  margin-top: 1em;
+  opacity: 0.85;
+}
+
+/* ─── code-showcase ─────────────────────────────────────────────── */
+section.code-showcase {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+section.code-showcase pre {
+  font-size: 0.8em;
+  max-height: 70%;
+  margin: 0.8em 0;
+}
+
+/* ─── Table row backgrounds ──────────────────────────────────────
+   Marp imports GitHub markdown CSS, which sets `td { background: white }`.
+   These late-cascade rules defeat that. Themes override via vars:
+     --table-row-bg      → primary cell bg (default: transparent → slide bg)
+     --table-row-alt-bg  → alternating row tint (default: subtle gray) */
+section table tr,
+section table td {
+  background-color: var(--table-row-bg, transparent);
+}
+section table tr:nth-child(even),
+section table tr:nth-child(even) td {
+  background-color: var(--table-row-alt-bg, rgba(127, 127, 127, 0.05));
+}
+
+/* `wide-table` — opt-in modifier that makes a markdown table fill the
+   slide width. Marp imports GitHub markdown CSS which sets
+   `table { display: block; width: max-content }`, leaving tables at
+   content width. Scoped to .wide-table so it doesn't affect tables
+   on other slides. */
+section.wide-table table {
+  display: table;
+  width: 100%;
+}
+section.wide-table table :is(th, td) {
+  padding: 0.25em 0.6em;
+}
+
+/* ─── Layer 2: auto-fit scale classes ───────────────────────────────
+   Discrete font-size steps assigned by `scripts/auto-fit.mjs` based on
+   rendered geometry. The script measures each slide and writes the
+   recommended classes back to the markdown _class directive, e.g.:
+       <!-- _class: prose-with-tldr b-90 -->
+   Heading scale classes are deprecated and must not be used. Default is
+   no body scale class (1.0×). Below b-90 the script splits the slide instead of
+   shrinking further. */
+
+/* Body scale — applied to direct non-heading children only, so font-size
+   doesn't double-cascade through wrapper divs. Descendants inherit the
+   computed px value. */
+section.b-95 > *:not(:is(h1, h2, h3, h4, h5, h6)) { font-size: 0.95em; line-height: 1.5; }
+section.b-90 > *:not(:is(h1, h2, h3, h4, h5, h6)) { font-size: 0.9em;  line-height: 1.45; }
+
+/* Keep prose layouts top-anchored after body scale changes. */
+section.prose:is(.b-95, .b-90),
+section.prose-with-tldr:is(.b-95, .b-90) {
+  justify-content: flex-start;
+}
+section.prose-with-tldr:is(.b-95, .b-90) > blockquote {
+  font-size: 0.8em;
+}

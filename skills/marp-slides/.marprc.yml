@@ -1,0 +1,10 @@
+# Lets you preview the bundled layout catalog from this folder:
+#   marp --preview --allow-local-files example.md
+# marp reads this config from the CWD; paths are relative to this folder.
+# (No top-level `theme:` — that would override the deck's frontmatter.)
+themeSet:
+  - themes/dark.css
+  - themes/light.css
+  - themes/high-contrast.css
+  - themes/newspaper.css
+  - themes/synthwave.css

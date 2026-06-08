@@ -1,0 +1,10 @@
+# Lets you preview the example deck directly from this folder:
+#   marp --preview --allow-local-files coffee-brewing.deck.md
+# marp reads this config from the CWD; paths are relative to examples/.
+# (No top-level `theme:` — that would override the deck's frontmatter.)
+themeSet:
+  - ../skills/marp-slides/themes/dark.css
+  - ../skills/marp-slides/themes/light.css
+  - ../skills/marp-slides/themes/high-contrast.css
+  - ../skills/marp-slides/themes/newspaper.css
+  - ../skills/marp-slides/themes/synthwave.css

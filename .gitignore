@@ -1,0 +1,11 @@
+# Node deps (consumers run `npm install` in marp-slides/scripts)
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+*.log
+
+# Marp render artifacts (decks render to .html/.pdf/.pptx; never source)
+*.html
+*.pdf
+*.pptx
