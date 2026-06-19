@@ -13,3 +13,7 @@ node_modules/
 # Release zips (built by scripts/build-marpsmith-skill-zips.sh; uploaded as
 # GitHub Release assets, not committed into history)
 dist/
+
+# Internal progress/TODO tracker — lives in the parent md/ workspace, never
+# shipped in this package. Defensive ignore in case a copy lands in-tree.
+marpsmith-PROGRESS.md

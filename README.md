@@ -37,6 +37,17 @@ npm i -g @marp-team/marp-cli                          # render / preview decks (
 
 Marpsmith is a skill bundle, not a standalone CLI. The Node scripts are helper tools that agents run from inside the skills.
 
+## Install on claude.ai
+
+Pre-built per-skill zips are attached to each [GitHub Release](https://github.com/RanaCM/marpsmith/releases). claude.ai installs **one skill per zip**, so upload each one separately:
+
+1. Download the skill zips you want from the [latest release](https://github.com/RanaCM/marpsmith/releases/latest) (`marp-slides.zip`, `theme-generator.zip`, `deck-a11y-audit.zip`). Optionally verify them against `SHA256SUMS.txt`.
+2. In claude.ai, go to **Settings > Features > Skills** and upload each zip. claude.ai does not accept a combined multi-skill archive, so add them one at a time.
+
+Requires a Pro, Max, Team, or Enterprise plan with code execution enabled. Custom skills on claude.ai are per-user and do not sync to the Claude API or Claude Code.
+
+Note: `marp-slides` ships without `node_modules` (consumers run `npm install` in `marp-slides/scripts`). The claude.ai sandbox's network access varies, so the Node helper scripts (`lint` / `auto-fit` / `check-slides`) may not install there; the layout and theme guidance in `SKILL.md` works regardless.
+
 To confirm the helper scripts (and their headless Chrome) installed correctly:
 
 ```bash
