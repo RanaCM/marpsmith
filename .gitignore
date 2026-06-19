@@ -9,3 +9,7 @@ node_modules/
 *.html
 *.pdf
 *.pptx
+
+# Release zips (built by scripts/build-marpsmith-skill-zips.sh; uploaded as
+# GitHub Release assets, not committed into history)
+dist/
